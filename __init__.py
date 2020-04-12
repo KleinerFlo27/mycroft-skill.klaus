@@ -17,8 +17,18 @@
 
 from adapt.intent import IntentBuilder
 from mycroft import MycroftSkill, intent_handler
+import RPi.GPIO as GPIO
 
-class HalloKlausSkill(MycroftSkill):
+# GPIO-Pins festlegen
+
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(17, GPIO.OUT)
+GPIO.setup(27, GPIO.OUT)
+GPIO.setup(22, GPIO.OUT)
+
+
+class GPIOSkill(MycroftSkill):
     def __init__(self):
         """ The __init__ method is called when the Skill is first constructed.
         It is often used to declare variables or perform setup actions, however
@@ -34,18 +44,15 @@ class HalloKlausSkill(MycroftSkill):
         settings will be available."""
         my_setting = self.settings.get('my_setting')
 
-    @intent_handler(IntentBuilder('HalloKlausIntent')
-                    .require('HalloKlausKeyword'))
+    @intent_handler(IntentBuilder('LichtAn')
+                    .require('LichtAnKeyword'))
     def handle_hallo_klaus_intent(self, message):
-        """ Skills can log useful information. These will appear in the CLI and
-        the skills.log file."""
-        self.log.info("There are five types of log messages: "
-                      "info, debug, warning, error, and exception.")
-        self.speak_dialog("hallo.klaus")
+        GPIO.output(17,True)
+        self.speak_dialog("lichtAN")
 
     def stop(self):
         pass
 
 
 def create_skill():
-    return HalloKlausSkill()
+    return GPIOSkill()
